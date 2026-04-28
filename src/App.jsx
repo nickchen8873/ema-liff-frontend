@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import liff from '@line/liff';
 import './App.css'; // 引入樣式
 // deploy test
@@ -23,6 +24,10 @@ function App() {
 
   // 2. 新增位置狀態
   const [location, setLocation] = useState({ lat: null, lng: null });
+
+  // 在你的 Component 內新增狀態
+  const [historyData, setHistoryData] = useState([]);
+  const [viewMode, setViewMode] = useState('form'); // 'form' 為填寫問卷, 'chart' 為看圖表
 
   // 初始化 LIFF (等同於 Vue 的 onMounted)、在 useEffect 中取得位置 (在 LIFF 初始化區塊內或下方)
   useEffect(() => {
@@ -53,6 +58,13 @@ function App() {
       );
     }
   }, []);
+
+  // 當使用者切換到圖表模式時，觸發抓取 (假設 userId 已經從 LIFF 拿到了)
+  useEffect(() => {
+    if (viewMode === 'chart' && userId) {
+      fetchHistory(userId);
+    }
+  }, [viewMode, userId]);
 
   // 處理送出
   const submitData = async () => {
@@ -95,12 +107,32 @@ function App() {
     }
   };
 
+  // 新增一個抓取資料的 function
+  const fetchHistory = async (uid) => {
+    try {
+      const baseUrl = import.meta.env.VITE_GO_API_URL;
+      const response = await fetch(`${baseUrl}/api/history?userId=${uid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setHistoryData(data || []);
+      }
+    } catch (error) {
+      console.error("無法取得歷史紀錄:", error);
+    }
+  };
+
   return (
     <div className="container">
       <header>
         <h2>日常脈絡紀錄</h2>
         {!isLiffInit && <p className="loading">系統初始化中...</p>}
       </header>
+
+      {/* 在你的 UI 中加入切換按鈕 */}
+      <div className="flex gap-4 mb-4">
+        <button onClick={() => setViewMode('form')} className="p-2 bg-gray-200 rounded">📝 紀錄當下</button>
+        <button onClick={() => setViewMode('chart')} className="p-2 bg-gray-200 rounded">📊 我的軌跡</button>
+      </div>
 
       {isLiffInit && (
         <main>
@@ -158,6 +190,33 @@ function App() {
 
           {message && <p className="status-msg">{message}</p>}
         </main>
+      )}
+
+      {/* 條件渲染圖表區塊 */}
+      {viewMode === 'chart' && (
+        <div className="w-full h-80 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          <h3 className="text-gray-600 mb-4 font-medium text-center">情緒與能量波動軌跡</h3>
+          {historyData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={historyData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888' }} />
+                <YAxis tick={{ fontSize: 12, fill: '#888' }} domain={[0, 100]} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                />
+                <Legend wrapperStyle={{ fontSize: '14px' }} />
+                {/* 低飽和紫色代表心情，低飽和綠色代表能量 */}
+                <Line type="monotone" name="心情分數" dataKey="moodScore" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" name="能量分數" dataKey="energyScore" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400">
+              目前還沒有足夠的軌跡可以顯示喔
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
