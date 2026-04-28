@@ -18,7 +18,7 @@ function App() {
   const contexts = ['Home', 'Work/Study', 'Commute', 'Social', 'Other'];
 
   const MY_LIFF_ID = "2009889443-bwfiYEbv";
-  const GO_API_URL = "https://ema-liff.onrender.com";
+  const baseUrl = "https://ema-liff.onrender.com";
 
   // 2. 新增位置狀態
   const [location, setLocation] = useState({ lat: null, lng: null });
@@ -66,7 +66,7 @@ function App() {
       }
 
       // 發送給 Go 後端
-      const response = await fetch(GO_API_URL, {
+      const response = await fetch(`${baseUrl}/api/submit-ema`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
