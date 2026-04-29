@@ -146,7 +146,7 @@ function App() {
         <button onClick={() => setViewMode('chart')} className="p-2 bg-gray-200 rounded">📊 我的軌跡</button>
       </div>
 
-      {isLiffInit && (
+      {isLiffInit && viewMode === 'form' && (
         <main>
           {/* 1. 情緒效價 */}
           <section className="question-block">
