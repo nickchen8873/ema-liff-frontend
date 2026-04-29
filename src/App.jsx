@@ -73,8 +73,12 @@ function App() {
 
   // 當使用者切換到圖表模式時，觸發抓取 (假設 userId 已經從 LIFF 拿到了)
   useEffect(() => {
-    if (viewMode === 'chart' && userId) {
-      fetchHistory(userId);
+    // 👇 加上這行：如果有真實 ID 就用真實的，沒有就用測試 ID
+    const fetchId = userId || "U00000000000000000000000000000000";
+
+    if (viewMode === 'chart') {
+      console.log(`[前端] 準備撈取軌跡，使用的 ID: ${fetchId}`); // 方便你在 F12 觀察
+      fetchHistory(fetchId);
     }
   }, [viewMode, userId]);
 
@@ -141,6 +145,7 @@ function App() {
       const response = await fetch(`${baseUrl}/api/history?userId=${uid}`);
       if (response.ok) {
         const data = await response.json();
+        console.log("[前端] 從後端收到的軌跡資料:", data); // 👈 新增這行
         setHistoryData(data || []);
       }
     } catch (error) {
