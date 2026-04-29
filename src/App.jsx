@@ -225,10 +225,10 @@ function App() {
 
       {/* 條件渲染圖表區塊 */}
       {viewMode === 'chart' && (
-        <div className="w-full h-80 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+        <div className="w-full bg-white p-4 rounded-lg shadow-sm border border-gray-100">
           <h3 className="text-gray-600 mb-4 font-medium text-center">情緒與能量波動軌跡</h3>
           {historyData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={250}>
               <LineChart data={historyData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888' }} />
