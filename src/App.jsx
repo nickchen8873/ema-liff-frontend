@@ -90,6 +90,21 @@ function App() {
         userId = profile.userId;
       }
 
+      // 👇 修正 ID 獲取邏輯
+      let finalUserId = userId; // 優先使用剛才在 useEffect 存進去的 state
+
+      // 雙重保險：如果 state 沒東西，但 LIFF 有登入，就再抓一次
+      if (!finalUserId && liff.isLoggedIn()) {
+        const profile = await liff.getProfile();
+        finalUserId = profile.userId;
+      }
+
+      // 🛡️ 關鍵防呆：如果還是沒有（代表你在電腦 Chrome 測試），給一組符合格式的測試 ID
+      if (!finalUserId) {
+        finalUserId = "U00000000000000000000000000000000"; // 必須是 U 開頭且 33 碼
+        console.warn("⚠️ 目前非 LINE 環境，使用測試用 UserID 送出");
+      }
+
       // 發送給 Go 後端
       const response = await fetch(`${baseUrl}/api/submit-ema`, {
         method: 'POST',
