@@ -141,7 +141,6 @@ function App() {
   // 新增一個抓取資料的 function
   const fetchHistory = async (uid) => {
     try {
-      const baseUrl = import.meta.env.VITE_GO_API_URL;
       const response = await fetch(`${baseUrl}/api/history?userId=${uid}`);
       if (response.ok) {
         const data = await response.json();
