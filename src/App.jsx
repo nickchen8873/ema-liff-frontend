@@ -27,6 +27,7 @@ function App() {
 
   // 在你的 Component 內新增狀態
   const [historyData, setHistoryData] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [viewMode, setViewMode] = useState('form'); // 'form' 為填寫問卷, 'chart' 為看圖表
 
   // 初始化 LIFF (等同於 Vue 的 onMounted)、在 useEffect 中取得位置 (在 LIFF 初始化區塊內或下方)
@@ -34,6 +35,17 @@ function App() {
     liff.init({ liffId: MY_LIFF_ID })
       .then(() => {
         setIsLiffInit(true);
+
+        // 初始化成功後，抓取使用者的 LINE ID
+        if (liff.isLoggedIn()) {
+          liff.getProfile()
+            .then((profile) => {
+              setUserId(profile.userId); // 把抓到的 U 開頭 ID 存入 state
+            })
+            .catch((err) => {
+              console.error('取得 Profile 失敗', err);
+            });
+        }
       })
       .catch((err) => {
         console.error('LIFF 初始化失敗', err);
