@@ -86,15 +86,21 @@ function App() {
 
   // 當拿到 userId 時，檢查是否已經綁定過 Fitbit
   useEffect(() => {
+    console.log("🔍 [狀態檢查] useEffect 被觸發，目前的 userId 是:", userId);
     if (userId) {
+      console.log(`🚀 [狀態檢查] 準備打 API 查詢綁定狀態: ${baseUrl}/api/fitbit/status?userId=${userId}`);
+
       fetch(`${baseUrl}/api/fitbit/status?userId=${userId}`)
         .then(res => res.json())
         .then(data => {
+          console.log("📥 [狀態檢查] 後端回傳結果:", data);
           if (data.isBound) {
             setIsFitbitBound(true);
           }
         })
         .catch(err => console.error("[前端] 無法取得綁定狀態:", err));
+    } else {
+      console.log("⏸️ [狀態檢查] 因為 userId 是空的，所以暫不發送 API。");
     }
   }, [userId]);
 
