@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import liff from '@line/liff';
+import FitbitBindButton from './components/FitbitBindButton';
 import './App.css'; // 引入樣式
 // deploy test
 
@@ -158,9 +159,10 @@ function App() {
         <h2>日常脈絡紀錄</h2>
         {!isLiffInit && <p className="loading">系統初始化中...</p>}
       </header>
-
       {/* 在你的 UI 中加入切換按鈕 */}
       <div className="flex gap-4 mb-4">
+        <FitbitBindButton />
+        <br></br>
         <button onClick={() => setViewMode('form')} className="p-2 bg-gray-200 rounded">📝 紀錄當下</button>
         <button onClick={() => setViewMode('chart')} className="p-2 bg-gray-200 rounded">📊 我的軌跡</button>
       </div>
