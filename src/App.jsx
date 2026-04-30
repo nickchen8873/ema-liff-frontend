@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import liff from '@line/liff';
-import FitbitBindButton from './components/FitbitBindButton';
+import FitbitBindButton from './components/FitbitBindButton.jsx';
 import './App.css'; // 引入樣式
 // deploy test
 
@@ -118,7 +118,7 @@ function App() {
           moodScore: payload.moodScore,
           context: payload.context,
           energyScore: energyScore, // 👈 新增這行：送出喚起度
-          userId: userId,            // 👈 新增這行：送出真實的 LINE ID
+          userId: finalUserId,            // 👈 新增這行：送出真實的 LINE ID
           // 👇 新增這兩行把座標傳給 Go
           lat: location.lat,
           lng: location.lng
