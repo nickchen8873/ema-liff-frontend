@@ -10,6 +10,7 @@ function App() {
   const [isLiffInit, setIsLiffInit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const [isFitbitBound, setIsFitbitBound] = useState(false); // 預設為未綁定
 
   // 問卷資料狀態
   const [payload, setPayload] = useState({
@@ -82,6 +83,20 @@ function App() {
       fetchHistory(fetchId);
     }
   }, [viewMode, userId]);
+
+  // 當拿到 userId 時，檢查是否已經綁定過 Fitbit
+  useEffect(() => {
+    if (userId) {
+      fetch(`${baseUrl}/api/fitbit/status?userId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.isBound) {
+            setIsFitbitBound(true);
+          }
+        })
+        .catch(err => console.error("[前端] 無法取得綁定狀態:", err));
+    }
+  }, [userId]);
 
   // 處理送出
   const submitData = async () => {
@@ -161,7 +176,16 @@ function App() {
       </header>
       {/* 在你的 UI 中加入切換按鈕 */}
       <div className="flex gap-4 mb-4">
-        <FitbitBindButton />
+        {/* Fitbit 綁定區塊 */}
+        <div className="flex justify-center">
+          {!isFitbitBound ? (
+            <FitbitBindButton />
+          ) : (
+            <div className="py-2 px-4 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-medium border border-emerald-100 shadow-sm">
+              ✅ 已成功綁定 Fitbit 裝置
+            </div>
+          )}
+        </div>
         <br></br>
         <button onClick={() => setViewMode('form')} className="p-2 bg-gray-200 rounded">📝 紀錄當下</button>
         <button onClick={() => setViewMode('chart')} className="p-2 bg-gray-200 rounded">📊 我的軌跡</button>
