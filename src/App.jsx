@@ -261,7 +261,7 @@ function App() {
           <h3 className="text-gray-600 mb-4 font-medium text-center">情緒與能量波動軌跡</h3>
           {historyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={historyData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <LineChart data={[...historyData].reverse()} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888' }} />
                 <YAxis tick={{ fontSize: 12, fill: '#888' }} domain={[0, 100]} />
